@@ -9,12 +9,13 @@ int comparisonAlpha(char, char);
 void mallocLibWords(char **);
 void freeLibWords(char **);
 int readLib(FILE *, char **, char *);
-void searchWord(char **, int);
+void searchWord(char **, int, char *);
+void addLib(char *,char *);
 
 void main(){
   FILE *fp;
   char *libWords[N], libName[S]="library.txt";
-  searchWord(libWords, readLib(fp, libWords, libName));
+  searchWord(libWords, readLib(fp, libWords, libName), libName);
 }
 
 int library(char *libWords[], char searchWord[], int wordsCount){
@@ -92,8 +93,8 @@ int readLib(FILE *fp, char *libWords[], char libName[]){
   return i;
 }
 
-void searchWord(char *libWords[], int i){
-  char searchWord[S];
+void searchWord(char *libWords[], int i, char libName[]){
+  char searchWord[S],com;
   int findNum;
   
   printf("input search word\n");
@@ -101,9 +102,25 @@ void searchWord(char *libWords[], int i){
 
   findNum = library(libWords, searchWord, i);
 
-  if(findNum<0)printf("%s is not found.\n",searchWord);
+  if(findNum<0){
+    printf("%s is not found.\n",searchWord);
+    printf("Add this word? input y or n.\n");
+
+    scanf("%c",&com);
+    if(com=='y')addLib(libName,searchWord);
+  }
   
   else printf("%s is found.\n",libWords[findNum]);
-
+  
   freeLibWords(libWords);
+}
+
+void addLib(char libName[],char searchWord[]){
+  if ((fp = fopen(libName, "a")) == NULL) {
+    fprintf(stderr, "Fail to open file.\n");
+  }
+
+  fprintf(fp,"%s",searchWord);
+
+  close(fp);
 }
